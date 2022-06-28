@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- <mapper namespace="com.product.pos.product.dao.productDao">  -->
+<mapper namespace="product">
+
+	<!-- 상품유무조회 -->
+	<select id="productExist" parameterType="String" resultType="int">
+		SELECT COUNT(*)
+		FROM T_PRODUCT
+		WHERE PRO_NM = '${proNm}'
+	</select>
+	
+	<!-- 상품목록조회 -->
+	<select id="productList" resultType="com.product.pos.product.vo.productVo">
+		SELECT PRO_NM as proNm, PRO_PRICE as proPrice, CUR_AC as curAc
+		FROM T_PRODUCT
+	</select>
+	
+	<!-- 새상품 등록 -->
+	<insert id="insertProduct" parameterType="com.product.pos.product.vo.productVo">
+		INSERT INTO	T_PRODUCT
+		(
+		PRO_SEQ
+		, PRO_NM
+		, PRO_PRICE
+		, PRO_REG_DT
+		, CUR_AC
+		)
+		VALUES
+		(
+		(select IFNULL(MAX(a.PRO_SEQ) + 1, 1) from t_product as a)
+		, #{proNm}
+		, #{proPrice}
+		, CURRENT_TIMESTAMP
+		, 0
+		)
+	</insert>
+	
+	<!-- 기록 관리 -->
+	<insert id="historyProduct" parameterType="com.product.pos.product.vo.productVo">	
+		INSERT INTO T_HISTORY
+		(
+		PRO_SEQ
+		, PRO_NM
+		, PRO_IN
+		, PRO_OUT
+		, PRO_DATE
+		)
+		VALUES
+		(
+		(select IFNULL(MAX(a.PRO_SEQ) + 1, 1) from t_history as a)
+		, #{proNm}
+		, #{proIn}
+		, 0
+		, CURRENT_TIMESTAMP
+		)
+	</insert>
+	<!-- 
+	<insert id="saleProduct" parameterType="com.product.pos.product.vo.productVo">
+		UPDATE T_PRODUCT 
+		SET CUR_AC = cur_ac  - #{proOut}
+		where PRO_NM = #{proNm};
+		
+	
+	</insert>
+	 -->
+		
+	<!-- 상품 수량 추가 -->
+	<update id="addProduct" parameterType="com.product.pos.product.vo.productVo">
+		UPDATE T_PRODUCT 
+		SET CUR_AC = CUR_AC  + #{proIn}
+		WHERE PRO_NM = #{proNm};
+	</update>
+	
+	
+	
+</mapper>

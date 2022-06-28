@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- <mapper namespace="com.product.pos.account.dao.accountDao">  -->
+<mapper namespace="account">
+	
+	<select id="searchAccount" resultType="Map">
+		SELECT * FROM t_account
+	</select>
+
+	<!-- mapper 인터페이스 메소드 명과 id 동일 -->
+	<!-- 로그인 -->
+<!-- 
+	<select id="login" parameterType="com.product.pos.account.vo.accountVo" resultType="accountVo">
+		SELECT *
+		FROM t_account
+		WHERE ID=#{id} AND PWD= #{pwd}
+	</select>
+ -->
+ 	<select id="loginCheck" resultType="Integer">
+ 		SELECT COUNT(*) FROM t_account
+ 		WHERE MBR_ID=#{id} AND MBR_PWD= #{pwd}
+ 	</select>
+	<!-- 회원가입 -->
+	<!-- 자바에서 acountVo 값이 들어올 것 인지 -->
+	<insert id="insertAccount" parameterType="com.product.pos.account.vo.accountVo">
+		INSERT INTO T_ACCOUNT
+		(
+		  MBR_SEQ
+		  , MBR_ID
+		  , MBR_PWD
+		  , MBR_NM
+		  , MBR_REG_DT
+		  , MBR_POSITON
+		)
+		VALUES
+		(
+		  (select IFNULL(MAX(a.MBR_SEQ) + 1, 1) from t_account as a)
+		  , #{id}
+		  , #{pwd}
+		  , #{name}
+		  , CURRENT_TIMESTAMP
+		  , #{position}
+		)
+	</insert>
+	
+</mapper>

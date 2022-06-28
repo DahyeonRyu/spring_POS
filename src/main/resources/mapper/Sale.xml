@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- <mapper namespace="com.product.pos.sale.dao.saleDao">  -->
+<mapper namespace="sale">
+	
+	<insert id="insertSale" parameterType="com.product.pos.sale.vo.saleVo">
+		INSERT INTO T_HISTORY
+		(
+		PRO_SEQ
+		, PRO_NM
+		, PRO_IN
+		, PRO_OUT
+		, PRO_DATE
+		)
+		VALUES
+		(
+		(select IFNULL(MAX(a.PRO_SEQ) + 1, 1) from t_history as a)
+		, #{proNm}
+		, 0
+		, #{proOut}
+		, CURRENT_TIMESTAMP
+		)
+	</insert>
+	
+	<update id="updateSale" parameterType="com.product.pos.sale.vo.saleVo">
+		UPDATE T_PRODUCT
+		SET CUR_AC = CUR_AC - #{proOut}
+		WHERE PRO_NM = #{proNm};
+	</update>
+	
+</mapper>
